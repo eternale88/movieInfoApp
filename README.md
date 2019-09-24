@@ -4,7 +4,7 @@
 
 ## Synopsis
 
-My Todo App that  I  built with HTML5, CSS3, and Vanilla JavaScript
+My movie App that allows a user to search for movies by title, and retrieve specific information by id - using the OMDb API. I  built it with HTML5, CSS3, Bootstrap 4, Axios, sessionStorage, and jQuery.
 
 ## Motivation
 
