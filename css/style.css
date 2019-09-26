@@ -1,0 +1,19 @@
+#movies img,
+#movie img {
+  width: 100%;
+}
+.card-body {
+  margin-top: 30px;
+}
+
+/* make images appear same size and add media query to disable at lower
+screen widths*/
+
+@media (min-width: 960px) {
+  #movies .col-md-3 .card {
+    height: 95%;
+  }
+  #movies .col-md-3 img {
+    height: 340px;
+  }
+}
