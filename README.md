@@ -1,6 +1,5 @@
 # movieInfoApp
 
- Hosted on Netlify [https://upbeat-booth-9a5b90.netlify.com/]
 
 ## Synopsis
 
