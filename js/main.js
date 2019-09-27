@@ -1,3 +1,6 @@
+let output = ''
+let listOfMovies = document.querySelector('#movies')
+
 const searchForm = document.querySelector('#searchForm')
 searchForm.addEventListener('submit', (e) => {
   let searchText = document.querySelector('#searchText').value
@@ -58,9 +61,23 @@ async function getMovies(searchText) {
     })
     .then((response) => {
       console.log(response.Search)
-      response.Search.forEach((movie) => {
-        console.log(movie)
+      let movies = response.Search
+      movies.forEach((movie) => {
+        output += `
+        <div class="col-md-3">
+          <div class="card card-body bg-light">
+            <img src=${movie.Poster}>
+            <h5>${movie.Title}</h5>
+            <a onclick="movieSelected('${movie.imdbID}')" class="btn btn-primary" href="movie.html">Movie Details</a>
+          </div>
+        </div>
+        `
       })
+      let doc = new DOMParser().parseFromString(output, 'text/html')
+      for (let elem of doc.body.childNodes) {
+        listOfMovies.appendChild(elem)
+      }
+      console.log(typeof doc)
     })
     .catch((error) => {
       console.log(error)
