@@ -1,13 +1,18 @@
-$(document).ready(() => {
-  $('#searchForm').on('submit', (e) => {
-    let searchText = $('#searchText').val()
+const searchForm = document.querySelector('#searchForm')
+searchForm.addEventListener('submit', (e) => {
+  let searchText = document.querySelector('#searchText').value
+  getMovies(searchText)
+    .then((response) => {
+      console.log(response)
+    })
+    .catch((error) => {
+      console.log(error)
+    })
 
-    getMovies(searchText)
-    e.preventDefault()
-  })
+  e.preventDefault()
 })
 
-function getMovies(searchText) {
+function getMovies2(searchText) {
   // request movies based on the search criteria
   axios
     .get(`https://www.omdbapi.com/?s=${searchText}&apikey=eaeba172`)
@@ -37,6 +42,38 @@ function getMovies(searchText) {
       // always executed
     })
 }
+
+async function getMovies(searchText) {
+  const request = new Request(
+    `https://www.omdbapi.com/?s=${searchText}&apikey=eaeba172`
+  )
+  await fetch(request)
+    .then((response) => {
+      if (response.status === 200) {
+        const data = response.json()
+        return data
+      } else {
+        throw new Error('Unable to get puzzle')
+      }
+    })
+    .then((response) => {
+      console.log(response.Search)
+      response.Search.forEach((movie) => {
+        console.log(movie)
+      })
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+}
+
+// getMovies(search)
+//   .then((response) => {
+//     console.log(response)
+//   })
+//   .catch((error) => {
+//     console.log(error)
+//   })
 
 // store the indvidual movie id that was clicked on
 // so that it can be retrieved in getMovie() and displayed
