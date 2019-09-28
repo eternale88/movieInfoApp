@@ -1,49 +1,14 @@
 let output = ''
-let listOfMovies = document.querySelector('#movies')
+const listOfMovies = document.querySelector('#movies')
+const singleMovie = document.querySelector('#movie')
 
 const searchForm = document.querySelector('#searchForm')
-searchForm.addEventListener('submit', (e) => {
-  let searchText = document.querySelector('#searchText').value
-  getMovies(searchText)
-    .then((response) => {
-      console.log(response)
-    })
-    .catch((error) => {
-      console.log(error)
-    })
-
-  e.preventDefault()
-})
-
-function getMovies2(searchText) {
-  // request movies based on the search criteria
-  axios
-    .get(`https://www.omdbapi.com/?s=${searchText}&apikey=eaeba172`)
-    .then(function(response) {
-      // handle success
-      console.log(response.data.Search)
-      let movies = response.data.Search
-      let output = ''
-      $.each(movies, (index, movie) => {
-        output += `
-        <div class="col-md-3">
-          <div class="card card-body bg-light">
-            <img src=${movie.Poster}>
-            <h5>${movie.Title}</h5>
-            <a onclick="movieSelected('${movie.imdbID}')" class="btn btn-primary" href="movie.html">Movie Details</a>
-          </div>
-        </div>
-        `
-      })
-      $('#movies').append(output)
-    })
-    .catch(function(error) {
-      // handle error
-      console.log(error)
-    })
-    .finally(function() {
-      // always executed
-    })
+if (searchForm) {
+  searchForm.addEventListener('submit', (e) => {
+    e.preventDefault()
+    let searchText = document.querySelector('#searchText').value
+    getMovies(searchText)
+  })
 }
 
 async function getMovies(searchText) {
@@ -56,11 +21,10 @@ async function getMovies(searchText) {
         const data = response.json()
         return data
       } else {
-        throw new Error('Unable to get puzzle')
+        throw new Error('Unable to get movies')
       }
     })
     .then((response) => {
-      console.log(response.Search)
       let movies = response.Search
       movies.forEach((movie) => {
         output += `
@@ -73,24 +37,19 @@ async function getMovies(searchText) {
         </div>
         `
       })
+      // Dom parser parses out template string into an object
+      // so we can loop through each object with for of, puting each
+      // one in the html, this is much nicer than creating
+      //elements dynamically
       let doc = new DOMParser().parseFromString(output, 'text/html')
       for (let elem of doc.body.childNodes) {
         listOfMovies.appendChild(elem)
       }
-      console.log(typeof doc)
     })
     .catch((error) => {
       console.log(error)
     })
 }
-
-// getMovies(search)
-//   .then((response) => {
-//     console.log(response)
-//   })
-//   .catch((error) => {
-//     console.log(error)
-//   })
 
 // store the indvidual movie id that was clicked on
 // so that it can be retrieved in getMovie() and displayed
@@ -102,16 +61,25 @@ function movieSelected(id) {
   return false
 }
 
-function getMovie() {
+async function getMovie() {
+  // get movie out of sessionStorage
   let movieId = sessionStorage.getItem('movieId')
   // request movie info based on that id
-  axios
-    .get(`https://www.omdbapi.com/?i=${movieId}&apikey=eaeba172`)
+  const request = new Request(
+    `https://www.omdbapi.com/?i=${movieId}&apikey=eaeba172`
+  )
 
-    .then(function(response) {
-      // handle success
-      console.log(response)
-      let movie = response.data
+  await fetch(request)
+    .then((response) => {
+      if (response.status === 200) {
+        const data = response.json()
+        return data
+      } else {
+        throw new Error('Unable to get movie')
+      }
+    })
+    .then((response) => {
+      let movie = response
       let output = `
         <div class="row">
           <div class="col-md-4">
@@ -141,12 +109,11 @@ function getMovie() {
             <a href="index.html" class="btn btn-default">Go Back To Search</a>
           </div>
         </div>
-
       `
-      $('#movie').append(output)
+      let doc = new DOMParser().parseFromString(output, 'text/html')
+      singleMovie.appendChild(doc.body)
     })
-    .catch(function(error) {
-      // handle error
+    .catch((error) => {
       console.log(error)
     })
 }
